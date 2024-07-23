@@ -1,0 +1,34 @@
+name: Scrape Laptops
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Chạy hàng ngày vào lúc 00:00 UTC
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Sử dụng phiên bản Python bạn muốn
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraping script
+        run: python scrape_laptops.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add laptops.csv
+          git commit -m 'Update laptops data'
+          git push
+
